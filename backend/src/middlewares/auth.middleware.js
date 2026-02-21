@@ -3,8 +3,7 @@ const { JWT_SECRET } = require('../config/config')
 
 const authMiddleware = async (req , res, next)=>{
     try {
-        const {authorization} = req.headers
-        const token = authorization.split(' ')[1]
+        const {token} = req.cookies
         if(!token){
             return res.status(404).json({
                 msg : "token missing!"

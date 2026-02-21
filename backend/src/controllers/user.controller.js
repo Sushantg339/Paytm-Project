@@ -47,7 +47,7 @@ const signupController = async (req, res)=>{
         })
 
         const token = jwt.sign({userId : user._id}, JWT_SECRET)
-
+        res.cookie('token', token)
         return res.status(201).json({
             message: "User created successfully",
             token: token
@@ -94,7 +94,7 @@ const signinController = async (req , res)=>{
         }
 
         const token = await jwt.sign({userId : user._id}, JWT_SECRET)
-
+        res.cookie('token', token)
         return res.status(200).json({
             jwt : token
         })
@@ -191,5 +191,28 @@ const getUsers = async (req , res)=>{
     }
 }
 
+const getMe = async(req, res)=>{
+    try {
+        const userId = req.userId
 
-module.exports = {signupController, signinController, updateDetails, getUsers}
+        const me = await userModel.findById(userId).select('-password -__v')
+
+        if(!me){
+            return res.status(401).json({
+                msg : "unauthorized"
+            })
+        }
+
+        return res.status(200).json({
+            msg : "user fetched successfully",
+            user : me
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            msg : "internal server error!"
+        })
+    }
+}
+
+module.exports = {signupController, signinController, updateDetails, getUsers, getMe}
