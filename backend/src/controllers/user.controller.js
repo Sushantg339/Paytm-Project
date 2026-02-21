@@ -165,10 +165,13 @@ const getUsers = async (req , res)=>{
     try {
         const {filter} = req.query
 
-        let query = {}
+        let query = {
+            _id : {$ne : req.userId}
+        }
 
         if(filter){
             query = {
+                _id: { $ne: req.userId },
                 $or : [
                     {username : {$regex : filter, $options : 'i'}},
                     {firstName : {$regex : filter, $options : 'i'}},
